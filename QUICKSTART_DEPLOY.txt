@@ -1,0 +1,248 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║           FOOTBALL DATA API - DEPLOY RÁPIDO KOYEB + NEON.TECH              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📦 ARQUIVOS DO PROJETO
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ api.py                    → API REST Flask (arquivo principal)
+✅ create_database.py        → Cria schema no PostgreSQL
+✅ populate_database.py      → Popula banco com dados do Flashscore
+✅ test_api.py               → Testa todos os endpoints
+✅ requirements_deploy.txt   → Dependências Python
+✅ Procfile                  → Config para Koyeb
+✅ runtime.txt               → Versão do Python
+✅ .env.example              → Exemplo de variáveis de ambiente
+✅ .gitignore_deploy         → Arquivos ignorados pelo Git
+✅ README_DEPLOY.md          → README completo
+✅ DEPLOY_GUIDE.md           → Guia detalhado de deploy
+
+
+🚀 DEPLOY EM 5 MINUTOS
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSO 1: NEON.TECH (Banco de Dados)
+───────────────────────────────────────────────────────────────────────────────
+1. Acesse: https://neon.tech
+2. Crie conta (use GitHub)
+3. Clique em "Create Project"
+4. Copie a CONNECTION STRING que aparece
+   Exemplo: postgresql://user:pass@host.neon.tech/db?sslmode=require
+
+
+PASSO 2: CONFIGURAR LOCALMENTE
+───────────────────────────────────────────────────────────────────────────────
+1. Crie arquivo .env na raiz:
+
+   DATABASE_URL=sua_connection_string_aqui
+   PORT=8000
+   ENVIRONMENT=development
+
+2. Instale dependências:
+
+   pip install -r requirements_deploy.txt
+
+3. Crie schema do banco:
+
+   python create_database.py
+
+4. Popule com dados (30-60 min):
+
+   python populate_database.py
+
+
+PASSO 3: KOYEB (Hosting)
+───────────────────────────────────────────────────────────────────────────────
+1. Acesse: https://www.koyeb.com
+2. Crie conta (use GitHub)
+3. Crie repositório no GitHub:
+
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git remote add origin https://github.com/SEU_USER/SEU_REPO.git
+   git push -u origin main
+
+4. No Koyeb:
+   → Create Service
+   → Escolha GitHub
+   → Selecione seu repositório
+   → Configure variáveis de ambiente:
+     
+     DATABASE_URL = sua_connection_string_do_neon
+     ENVIRONMENT = production
+
+5. Deploy!
+
+
+PASSO 4: TESTAR
+───────────────────────────────────────────────────────────────────────────────
+Acesse sua URL do Koyeb (ex: https://seu-app.koyeb.app)
+
+Endpoints para testar:
+  ✓ https://seu-app.koyeb.app/
+  ✓ https://seu-app.koyeb.app/health
+  ✓ https://seu-app.koyeb.app/api/leagues
+  ✓ https://seu-app.koyeb.app/api/matches?limit=10
+
+
+🧪 TESTAR LOCALMENTE ANTES DO DEPLOY
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Execute a API:
+
+   python api.py
+
+2. Em outro terminal, execute os testes:
+
+   python test_api.py
+
+3. Ou teste manualmente:
+
+   curl http://localhost:8000/health
+   curl http://localhost:8000/api/leagues
+
+
+📡 PRINCIPAIS ENDPOINTS
+═══════════════════════════════════════════════════════════════════════════════
+
+GET /                                    → Info da API
+GET /health                              → Health check
+GET /api/leagues                         → Todas as ligas
+GET /api/leagues/{id}/seasons            → Temporadas de uma liga
+GET /api/matches                         → Listar partidas
+GET /api/matches?league_id=brasileirao   → Filtrar por liga
+GET /api/matches?season=2023             → Filtrar por temporada
+GET /api/matches?team=Palmeiras          → Filtrar por time
+GET /api/matches/{id}                    → Detalhes de uma partida
+GET /api/standings/{league}/{season}     → Classificação
+GET /api/teams                           → Listar times
+GET /api/teams/{id}/stats                → Estatísticas do time
+GET /api/search?q=termo                  → Busca geral
+
+
+🏆 DADOS DISPONÍVEIS
+═══════════════════════════════════════════════════════════════════════════════
+
+Anos: 2022, 2023, 2024
+
+Campeonatos:
+  🇧🇷 Brasileirão, Copa do Brasil, Paulista, Carioca
+  🏴󐁧󐁢󐁥󐁮󐁧󐁿 Premier League
+  🇪🇸 La Liga
+  🇮🇹 Serie A
+  🇩🇪 Bundesliga
+  🇫🇷 Ligue 1
+  🌍 Champions League, Europa League
+
+
+⚙️ ESTRUTURA DO BANCO
+═══════════════════════════════════════════════════════════════════════════════
+
+leagues (campeonatos)
+  ├── teams (times)
+  ├── matches (partidas)
+  │     └── match_stats (estatísticas)
+  ├── standings (classificação)
+  └── team_stats (estatísticas de times)
+
+
+💡 DICAS IMPORTANTES
+═══════════════════════════════════════════════════════════════════════════════
+
+✓ Teste TUDO localmente antes do deploy
+✓ populate_database.py demora 30-60 minutos
+✓ Use .gitignore_deploy para não subir .env
+✓ Guarde sua connection string do Neon em lugar seguro
+✓ Tier gratuito tem limites (veja DEPLOY_GUIDE.md)
+✓ Monitore logs no dashboard do Koyeb
+
+
+🐛 PROBLEMAS COMUNS
+═══════════════════════════════════════════════════════════════════════════════
+
+"Could not connect to database"
+  → Verifique DATABASE_URL no .env
+  → Teste conexão: psql "sua_connection_string"
+
+"Application failed to start"
+  → Veja logs no Koyeb
+  → Teste local: gunicorn api:app
+
+"No data in database"
+  → Execute populate_database.py
+  → Verifique no console Neon: SELECT COUNT(*) FROM matches;
+
+API lenta
+  → Normal no tier gratuito
+  → Considere adicionar cache
+  → Use paginação (limit/offset)
+
+
+📚 DOCUMENTAÇÃO COMPLETA
+═══════════════════════════════════════════════════════════════════════════════
+
+README_DEPLOY.md    → Documentação completa do projeto
+DEPLOY_GUIDE.md     → Guia passo a passo detalhado
+
+
+🎯 EXEMPLOS DE USO
+═══════════════════════════════════════════════════════════════════════════════
+
+JavaScript:
+───────────
+fetch('https://sua-api.koyeb.app/api/matches?league_id=brasileirao')
+  .then(r => r.json())
+  .then(data => console.log(data));
+
+Python:
+───────
+import requests
+r = requests.get('https://sua-api.koyeb.app/api/standings/brasileirao/2023')
+print(r.json())
+
+cURL:
+─────
+curl "https://sua-api.koyeb.app/api/matches?team=Palmeiras&limit=5"
+
+
+✅ CHECKLIST ANTES DO DEPLOY
+═══════════════════════════════════════════════════════════════════════════════
+
+[ ] Conta criada no Neon.tech
+[ ] Banco PostgreSQL criado
+[ ] Connection string copiada
+[ ] .env configurado localmente
+[ ] create_database.py executado com sucesso
+[ ] populate_database.py executado (dados inseridos)
+[ ] API testada localmente (python api.py)
+[ ] test_api.py passou todos os testes
+[ ] Código versionado no Git
+[ ] Repositório criado no GitHub
+[ ] Conta criada no Koyeb
+[ ] .gitignore configurado (não sobe .env)
+[ ] Deploy feito no Koyeb
+[ ] Variáveis de ambiente configuradas no Koyeb
+[ ] Endpoints testados em produção
+
+
+🎉 PRONTO PARA PRODUÇÃO!
+═══════════════════════════════════════════════════════════════════════════════
+
+Depois de seguir todos os passos, você terá:
+
+✅ API REST profissional no ar
+✅ Banco PostgreSQL na nuvem (Neon)
+✅ Dados de 11 campeonatos
+✅ 3 anos de histórico (2022-2024)
+✅ Endpoints documentados
+✅ Tudo GRATUITO!
+
+URL da sua API: https://seu-app.koyeb.app
+
+Compartilhe, use em projetos, portfolio, etc! ⚽🚀
+
+
+═══════════════════════════════════════════════════════════════════════════════
+Para dúvidas, consulte DEPLOY_GUIDE.md ou README_DEPLOY.md
+═══════════════════════════════════════════════════════════════════════════════
